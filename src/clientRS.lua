@@ -73,9 +73,7 @@ exports['qtarget']:AddBoxZone("decrypt", vector3(2836.25, 1515.93, 24.72), 2.45,
 })
 
 
-RegisterCommand('blk', function ()
-    SetBlackOut()
-end)
+
 
 RegisterCommand("pos", function ()
     local pos = GetEntityCoords(PlayerPedId())
