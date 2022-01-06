@@ -151,10 +151,11 @@ Citizen.CreateThread(function()
 		end
 	end
 end)
-
+local canBuild = true
 function buildHackingtool()
 	ESX.TriggerServerCallback('checkBuyHack', function(cb) 
-		if cb == 7 then
+		if cb == 7  and canBuild then
+			canBuild = false
 			playAnim('mini@repair',"fixing_a_ped", 10000)
 		exports.rprogress:Custom({
 			Duration = 10000,
@@ -164,6 +165,7 @@ function buildHackingtool()
 				TriggerServerEvent("buyHack", PlayerPedId())
 			  ESX.ShowNotification('You have built an Advanced Hacking tool')
 			  canGrab = false
+			  canBuild = true
 			end   
 		})     
 		else
