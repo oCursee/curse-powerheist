@@ -14,12 +14,23 @@ end)
 
 ESX.RegisterServerCallback('checkItem', function(source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
-    if xPlayer.getInventoryItem('advanced-lockpick').count >=1 then
-        xPlayer.removeInventoryItem('advanced-lockpick', 1)
-        cb(1)
-    else
-        cb(0)
+    if Config.UseOx then
+        local pick = ox_inventory:GetItem(source, 'advanced-lockpick')
+        if pick.count >=1 then
+            ox_inventory:RemoveItem(source, 'advanced-lockpick', 1)
+            cb(1)
+        else
+            cb(0)
+        end
+    elseif not Config.UseOx then
+        if xPlayer.getInventoryItem('advanced-lockpick').count >=1 then
+            xPlayer.removeInventoryItem('advanced-lockpick', 1)
+            cb(1)
+        else
+            cb(0)
+        end
     end
+    
 	
 end)
 
@@ -27,8 +38,8 @@ end)
 ESX.RegisterServerCallback('checkCardreader', function(source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
     if Config.UseOx then
-        local cardreader = ox_inventory:Search(source, 1, {'cardreader'})
-        if  cardreader then
+        local cardreader = ox_inventory:GetItem(source, 'cardreader')
+        if  cardreader.count >= 1 then
             cb(true)
         else
             cb(false)
@@ -48,8 +59,8 @@ end)
 RegisterNetEvent('addDecrypt')
 AddEventHandler('addDecrypt', function ()
     local xPlayer = ESX.GetPlayerFromId(source)
-    local cardreader = ox_inventory:Search(source, 1, {'cardreader'})
-    if Config.UseOx and xPlayer.canCarryItem('advdecryptor', 1)  and cardreader then   
+    local cardreader = ox_inventory:GetItem(source, 'cardreader')
+    if Config.UseOx and xPlayer.canCarryItem('advdecryptor', 1)  and cardreader.count >= 1 then   
             xPlayer.removeInventoryItem("cardreader", 1)  
             xPlayer.addInventoryItem("advdecryptor", 1)  
     
@@ -61,8 +72,8 @@ end)
 RegisterNetEvent('FinishDecrypt')
 AddEventHandler('FinishDecrypt', function ()
     local xPlayer = ESX.GetPlayerFromId(source)
-    local advdecryptor = ox_inventory:Search(source, 1, {'advdecryptor'})
-    if Config.UseOx and xPlayer.canCarryItem('advdecryptor', 1)  and advdecryptor then
+    local advdecryptor = ox_inventory:GetItem(source, 'advdecryptor')
+    if Config.UseOx and xPlayer.canCarryItem('advdecryptor', 1)  and advdecryptor.count >= 1 then
             xPlayer.removeInventoryItem("advdecryptor", 1)  
             xPlayer.addInventoryItem('decryptedchip', 1)
     elseif not Config.UseOx and xPlayer.canCarryItem('advdecryptor', 1)  and xPlayer.getInventoryItem('advdecryptor').count >= 1 then
@@ -76,8 +87,8 @@ end)
 ESX.RegisterServerCallback('checkDecrypt', function(source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
     if Config.UseOx then
-        local advdecryptor = ox_inventory:Search(source, 1, {'advdecryptor'})
-        if advdecryptor then
+        local advdecryptor = ox_inventory:GetItem(source, 'advdecryptor')
+        if advdecryptor.count >= 1 then
             cb(3)
         else
             cb(4)
@@ -93,8 +104,8 @@ end)
 ESX.RegisterServerCallback('checkCracker', function(source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
     if Config.UseOx then
-        local cracker = ox_inventory:Search(source, 1, {'net_cracker'})
-        if cracker then
+        local cracker = ox_inventory:GetItem(source, 'net_cracker')
+        if cracker.count >= 1 then
             cb(5)
         else
             cb(6)
@@ -140,9 +151,9 @@ end)
 ESX.RegisterServerCallback('checkBuyHack', function(source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
     if Config.UseOx then
-        local chip = ox_inventory:Search(source, 1, {'decryptedchip'})
-        local money = ox_inventory:Search(source, 11050, {'money'})
-        if chip and money then
+        local chip = ox_inventory:GetItem(source, 'decryptedchip') 
+        local money = ox_inventory:GetItem(source, 'money') 
+        if chip.count >= 1 and money.count >= 11050 then
             cb(7)
         else
             cb(8)
@@ -161,12 +172,12 @@ RegisterNetEvent('buyHack')
 AddEventHandler('buyHack', function ()
     local xPlayer = ESX.GetPlayerFromId(source)
     if Config.UseOx then
-        local money = ox_inventory:Search(source, 11050, {'money'})
-        local chip = ox_inventory:Search(source, 1, {'decryptedchip'})
-        if chip and money then
+        local money = ox_inventory:GetItem(source, 'money') 
+        local chip = ox_inventory:GetItem(source, 'decryptedchip') 
+        if chip.count >= 1 and money.count >= 11050 then
             xPlayer.addInventoryItem('net_cracker', 1)
-            ox_inventory:RemoveItem(source, 'decryptedchip', 11050)
-            ox_inventory:RemoveItem(source, 'money', 1)
+            ox_inventory:RemoveItem(source, 'decryptedchip', 1)
+            ox_inventory:RemoveItem(source, 'money', 11050)
         else
             TriggerClientEvent('esx:showNotification', source, 'You need a Decrypted Chip(1) and $11,050')
         end 
